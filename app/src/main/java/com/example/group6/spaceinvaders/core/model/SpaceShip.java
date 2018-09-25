@@ -1,4 +1,4 @@
-package com.example.christian.spaceinvaders.core.model;
+package com.example.group6.spaceinvaders.core.model;
 
 import android.graphics.Color;
 
