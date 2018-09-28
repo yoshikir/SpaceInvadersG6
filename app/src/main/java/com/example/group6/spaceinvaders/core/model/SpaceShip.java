@@ -2,8 +2,7 @@ package com.example.group6.spaceinvaders.core.model;
 
 import android.graphics.Color;
 
-import Engine.GameObject;
-import Engine.Vector2;
+
 
 
 /**
@@ -26,8 +25,5 @@ public class SpaceShip extends GameObject {
     }
 
 
-    private void setColor(Color color){
-        this.color= color;
-    }
 
 }
