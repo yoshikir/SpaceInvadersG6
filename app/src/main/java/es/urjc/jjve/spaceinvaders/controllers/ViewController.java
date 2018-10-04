@@ -52,6 +52,7 @@ public class ViewController implements Observer,Runnable {
 
     private PlayerShip playerShip;
 
+    private boolean lost;
     private int score;
 
 
@@ -143,19 +144,13 @@ public class ViewController implements Observer,Runnable {
     }
 
     public void updateGame(){
-        for(Invader i:invaders){
-            if(i.getVisibility()) {
 
-                    this.view.drawGameObject(i.getBitmap(), i.getX(), i.getY());
 
-            }
-        }
+        view.drawBackground();
 
-        for(DefenceBrick b:bricks){
-            if(b.getVisibility()) {
-                view.drawGameObject(b.getRect());
-            }
-        }
+        paintInvaders();
+
+        paintBricks();
 
         if(bullet.getStatus()){
             view.drawGameObject(bullet.getRect());
@@ -171,6 +166,72 @@ public class ViewController implements Observer,Runnable {
 
     }
 
+
+    public void updateEntities(){
+
+        boolean bumpedEntity = false;
+
+        for(Invader i:invaders){
+
+            if(i.getVisibility()) {
+                // Move the next invader
+                i.update(fps);
+
+                // Does he want to take a shot?
+                if(i.takeAim(playerShip.getX(),
+                        playerShip.getLength())){
+
+                    // If so try and spawn a bullet
+                    if(invadersBullets[nextBullet].shoot(i.getX()
+                                    + i.getLength() / 2,
+                            i.getY(), bullet.DOWN)) {
+
+                        // Shot fired
+                        // Prepare for the next shot
+                        nextBullet++;
+
+                        // Loop back to the first one if we have reached the last
+                        if (nextBullet == maxInvaderBullets) {
+                            // This stops the firing of another bullet until one completes its journey
+                            // Because if bullet 0 is still active shoot returns false.
+                            nextBullet = 0;
+                        }
+                    }
+                }
+
+                // If that move caused them to bump the screen change bumped to true
+                if (i.getX() > screenX - i.getLength()
+                        || i.getX() < 0){
+
+                    bumpedEntity = true;
+
+                }
+            }
+
+            if(bumpedEntity){
+
+                // Move all the invaders down and change direction
+                for(Invader inv:invaders){
+                    inv.dropDownAndReverse();
+                    // Have the invaders landed
+                    if(inv.getY() > screenY - screenY / 10){
+                        lost = true;
+                    }
+                }
+
+
+            }
+
+        }
+
+        // Update all the invaders bullets if active
+        for(Bullet bullet:invadersBullets){
+            if(bullet.getStatus()) {
+                bullet.update(fps);
+            }
+        }
+
+    }
 
 
     // If SpaceInvadersActivity is started then
@@ -225,6 +286,25 @@ public class ViewController implements Observer,Runnable {
                 }
             }
         }
+    }
+
+    public void paintInvaders(){
+        for(Invader i:invaders){
+            if(i.getVisibility()) {
+
+                this.view.drawGameObject(i.getBitmap(), i.getX(), i.getY());
+
+            }
+        }
+    }
+
+    public void paintBricks(){
+        for(DefenceBrick b:bricks){
+            if(b.getVisibility()) {
+                view.drawGameObject(b.getRect());
+            }
+        }
+
     }
 
     public SpaceInvadersView getView() {

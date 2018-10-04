@@ -231,68 +231,9 @@ public class SpaceInvadersView extends SurfaceView {
 
 
         // Update all the invaders if visible
-        for(int i = 0; i < numInvaders; i++){
-
-            if(invaders[i].getVisibility()) {
-                // Move the next invader
-                invaders[i].update(fps);
-
-                // Does he want to take a shot?
-                if(invaders[i].takeAim(playerShip.getX(),
-                        playerShip.getLength())){
-
-                    // If so try and spawn a bullet
-                    if(invadersBullets[nextBullet].shoot(invaders[i].getX()
-                                    + invaders[i].getLength() / 2,
-                            invaders[i].getY(), bullet.DOWN)) {
-
-                        // Shot fired
-                        // Prepare for the next shot
-                        nextBullet++;
-
-                        // Loop back to the first one if we have reached the last
-                        if (nextBullet == maxInvaderBullets) {
-                            // This stops the firing of another bullet until one completes its journey
-                            // Because if bullet 0 is still active shoot returns false.
-                            nextBullet = 0;
-                        }
-                    }
-                }
-
-                // If that move caused them to bump the screen change bumped to true
-                if (invaders[i].getX() > screenX - invaders[i].getLength()
-                        || invaders[i].getX() < 0){
-
-                    bumped = true;
-
-                }
-            }
-
-        }
-
-        // Update all the invaders bullets if active
-        for(int i = 0; i < invadersBullets.length; i++){
-            if(invadersBullets[i].getStatus()) {
-                invadersBullets[i].update(fps);
-            }
-        }
 
         // Did an invader bump into the edge of the screen
-        if(bumped){
 
-            // Move all the invaders down and change direction
-            for(int i = 0; i < numInvaders; i++){
-                invaders[i].dropDownAndReverse();
-                // Have the invaders landed
-                if(invaders[i].getY() > screenY - screenY / 10){
-                    lost = true;
-                }
-            }
-
-            // Increase the menace level
-            // By making the sounds more frequent
-            menaceInterval = menaceInterval - 80;
-        }
 
         if(lost){
             prepareLevel();
