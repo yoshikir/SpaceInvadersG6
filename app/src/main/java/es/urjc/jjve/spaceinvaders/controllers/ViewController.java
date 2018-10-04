@@ -52,6 +52,10 @@ public class ViewController implements Observer,Runnable {
 
     private PlayerShip playerShip;
 
+    private int score;
+
+
+
     // The player's bullet
     private Bullet bullet;
 
@@ -149,9 +153,22 @@ public class ViewController implements Observer,Runnable {
 
         for(DefenceBrick b:bricks){
             if(b.getVisibility()) {
-                view.drawGameObject(b.getRect() );
+                view.drawGameObject(b.getRect());
             }
         }
+
+        if(bullet.getStatus()){
+            view.drawGameObject(bullet.getRect());
+        }
+
+        for(Bullet bullet:invadersBullets){
+            if(bullet.getStatus()) {
+                view.drawGameObject(bullet.getRect());
+            }
+        }
+
+        view.drawGameObject("Score: " + score , 10,50);
+
     }
 
 

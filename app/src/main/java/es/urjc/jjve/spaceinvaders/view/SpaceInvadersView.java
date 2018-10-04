@@ -397,7 +397,17 @@ public class SpaceInvadersView extends SurfaceView {
             canvas = ourHolder.lockCanvas();
             // Draw the background color
             canvas.drawColor(Color.argb(255, 26, 128, 182));
+            ourHolder.unlockCanvasAndPost(canvas);
         }
+    }
+
+    public void drawGameObject(RectF rect){
+
+        paint.setColor(Color.argb(255,  255, 255, 255));
+        canvas = ourHolder.lockCanvas();
+        canvas.drawRect(rect,paint);
+
+        ourHolder.unlockCanvasAndPost(canvas);
     }
 
 
@@ -412,47 +422,24 @@ public class SpaceInvadersView extends SurfaceView {
             // Now draw the Game Object
             canvas.drawBitmap(bitmap, x, y , paint);
 
-            // Draw the invaders
-            for(int i = 0; i < numInvaders; i++){
-                if(invaders[i].getVisibility()) {
-                    if(uhOrOh) {
-                        canvas.drawBitmap(invaders[i].getBitmap(), invaders[i].getX(), invaders[i].getY(), paint);
-                    }else{
-                        canvas.drawBitmap(invaders[i].getBitmap2(), invaders[i].getX(), invaders[i].getY(), paint);
-                    }
-                }
-            }
-
-            // Draw the bricks if visible
-            for(int i = 0; i < numBricks; i++){
-                if(bricks[i].getVisibility()) {
-                    canvas.drawRect(bricks[i].getRect(), paint);
-                }
-            }
-
-            // Draw the players bullet if active
-            if(bullet.getStatus()){
-                canvas.drawRect(bullet.getRect(), paint);
-            }
-
-
-            // Draw the invaders bullets if active
-            // Update all the invader's bullets if active
-            for(int i = 0; i < invadersBullets.length; i++){
-                if(invadersBullets[i].getStatus()) {
-                    canvas.drawRect(invadersBullets[i].getRect(), paint);
-                }
-            }
-
-            // Draw the score and remaining lives
-            // Change the brush color
-            paint.setColor(Color.argb(255,  249, 129, 0));
-            paint.setTextSize(40);
-            canvas.drawText("Score: " + score + "   Lives: " + lives, 10,50, paint);
 
             // Draw everything to the screen
             ourHolder.unlockCanvasAndPost(canvas);
-        }}
+        }
+    }
+
+    public void drawGameObject(String text, int x, int y){
+
+        canvas = ourHolder.lockCanvas();
+        paint.setColor(Color.argb(255,  249, 129, 0));
+        paint.setTextSize(40);
+
+        canvas.drawText(text,x,y,paint);
+
+        ourHolder.unlockCanvasAndPost(canvas);
+
+    }
+
 
     // If SpaceInvadersActivity is paused/stopped
     // shutdown our thread.
