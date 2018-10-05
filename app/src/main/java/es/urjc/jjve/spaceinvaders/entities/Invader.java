@@ -41,8 +41,8 @@ public class Invader {
 
     public Invader(Context context, int row, int column, int screenX, int screenY) {
 
-        // Inicializa un RectF vacío
-               rect = new RectF();
+
+        rect = new RectF(this.height/2, this. width/2, this.height/2, this.width/2);
 
         length = screenX / 20;
         height = screenY / 20;

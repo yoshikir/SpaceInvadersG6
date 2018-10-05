@@ -26,12 +26,10 @@ public class Bullet {
         height = screenY / 20;
         isActive = false;
 
-        rect = new RectF();
+        rect = new RectF(this.height/2, this. width/2, this.height/2, this.width/2);
     }
 
-    public RectF getRect(){
-        return  rect;
-    }
+    public RectF getRect(){ return  rect; }
 
     public boolean getStatus(){
         return isActive;

@@ -39,8 +39,8 @@ public class PlayerShip {
     // la anchura y la altura de la pantalla
     public PlayerShip(Context context, int screenX, int screenY){
 
-        // Inicializa un RectF vacío
-        rect = new RectF();
+        
+        rect = new RectF(this.height/2, this. width/2, this.height/2, this.width/2);
 
         length = screenX/10;
         height = screenY/10;
