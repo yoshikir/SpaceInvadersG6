@@ -1,6 +1,7 @@
 package es.urjc.jjve.spaceinvaders.controllers;
 
 import android.content.Context;
+import android.graphics.RectF;
 import android.media.SoundPool;
 import android.util.Log;
 
@@ -79,6 +80,7 @@ public class ViewController implements Observer,Runnable {
     private int screenX;
     private int screenY;
 
+    private Context context;
 
     public ViewController(Context context, int x, int y){
 
@@ -88,6 +90,7 @@ public class ViewController implements Observer,Runnable {
 
         this.view= new SpaceInvadersView(context,x,y,this);
 
+        this.context=context;
         this.initGame(context);
 
 
@@ -102,12 +105,27 @@ public class ViewController implements Observer,Runnable {
 
     @Override
     public void run() {
+
+
         while (playing) {
 
             // Capture the current time in milliseconds in startFrameTime
             long startFrameTime = System.currentTimeMillis();
 
-            updateGame();
+            if(updateEntities()){
+                updateGame();
+            }else{
+                initGame(this.context);
+            }
+
+
+
+            //ToDo show start again button if updateEntities returns false
+
+
+
+
+
 
             // Calculate the fps this frame
             // We can then use the result to
@@ -143,6 +161,12 @@ public class ViewController implements Observer,Runnable {
         }
     }
 
+
+    /**
+     * This method is used every game tick to update the positions of every entity and the score
+     * Should be called when the entity is modified only, ToDo for next sprint, update entities on screen only when they are modified
+     */
+
     public void updateGame(){
 
 
@@ -164,13 +188,27 @@ public class ViewController implements Observer,Runnable {
 
         view.drawGameObject("Score: " + score , 10,50);
 
+
+
     }
 
 
-    public void updateEntities(){
+    /**
+     * This method is used to update the entity position and the actions they are going to take
+     * it checks if the invaders have reached the screen limit, and if they bumped into a brick barrier
+     * also it checks if the invader has the opportunity to shoot
+     * updates the bullet possition depending on the fps attribute
+     */
+    public boolean updateEntities(){
 
+        //checks if any entity has reached a limit or another entity
         boolean bumpedEntity = false;
 
+        //moves the spaceship
+        playerShip.update(fps);
+
+        //For each invader, we check if its an active one and then we check if it has the opportunity to shoot
+        //if the invader has reached the screen limit, it reverses the direction and goes down
         for(Invader i:invaders){
 
             if(i.getVisibility()) {
@@ -208,20 +246,34 @@ public class ViewController implements Observer,Runnable {
                 }
             }
 
+            //Checks if an invader has touched the playership
+
+
             if(bumpedEntity){
 
                 // Move all the invaders down and change direction
                 for(Invader inv:invaders){
                     inv.dropDownAndReverse();
                     // Have the invaders landed
-                    if(inv.getY() > screenY - screenY / 10){
-                        lost = true;
+                    if(RectF.intersects(i.getRect(),playerShip.getRect())) {
+                        return false;
                     }
+
                 }
 
 
             }
 
+        }
+
+        // Update the players bullet
+        if(bullet.getStatus()){
+            bullet.update(fps);
+        }
+
+        // Has the player's bullet hit the top of the screen
+        if(bullet.getImpactPointY() < 0){
+            bullet.setInactive();
         }
 
         // Update all the invaders bullets if active
@@ -230,6 +282,80 @@ public class ViewController implements Observer,Runnable {
                 bullet.update(fps);
             }
         }
+
+        // Has an invaders bullet hit the bottom of the screen
+        for(int i = 0; i < invadersBullets.length; i++){
+            if(invadersBullets[i].getImpactPointY() > screenY){
+                invadersBullets[i].setInactive();
+            }
+        }
+
+        // Has the player's bullet hit an invader
+        if(bullet.getStatus()) {
+            for (int i = 0; i < numInvaders; i++) {
+                if (invaders[i].getVisibility()) {
+                    if (RectF.intersects(bullet.getRect(), invaders[i].getRect())) {
+                        invaders[i].setInvisible();
+//                        soundPool.play(invaderExplodeID, 1, 1, 0, 0, 1);
+                        bullet.setInactive();
+                        score = score + 100;
+
+                        // Has the player won
+                        if(score == numInvaders * 100){
+                            paused = true;
+                            score = 0;
+                            initGame(this.context);                        }
+                    }
+                }
+            }
+        }
+
+        // Has an alien bullet hit a shelter brick
+        for(int i = 0; i < invadersBullets.length; i++){
+            if(invadersBullets[i].getStatus()){
+                for(int j = 0; j < numBricks; j++){
+                    if(bricks[j].getVisibility()){
+                        if(RectF.intersects(invadersBullets[i].getRect(), bricks[j].getRect())){
+                            // A collision has occurred
+                            invadersBullets[i].setInactive();
+                            bricks[j].setInvisible();
+//                            soundPool.play(damageShelterID, 1, 1, 0, 0, 1);
+                        }
+                    }
+                }
+            }
+
+        }
+
+        // Has a player bullet hit a shelter brick
+        if(bullet.getStatus()){
+            for(int i = 0; i < numBricks; i++){
+                if(bricks[i].getVisibility()){
+                    if(RectF.intersects(bullet.getRect(), bricks[i].getRect())){
+                        // A collision has occurred
+                        bullet.setInactive();
+                        bricks[i].setInvisible();
+//                        soundPool.play(damageShelterID, 1, 1, 0, 0, 1);
+                    }
+                }
+            }
+        }
+
+        // Has an invader bullet hit the player ship
+        for(int i = 0; i < invadersBullets.length; i++){
+            if(invadersBullets[i].getStatus()){
+                if(RectF.intersects(playerShip.getRect(), invadersBullets[i].getRect())){
+                    invadersBullets[i].setInactive();
+
+                    return false;
+//                  soundPool.play(playerExplodeID, 1, 1, 0, 0, 1);
+
+
+                }
+            }
+        }
+
+        return true;
 
     }
 
