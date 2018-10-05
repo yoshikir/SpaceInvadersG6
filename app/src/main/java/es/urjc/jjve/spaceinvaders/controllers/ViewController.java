@@ -5,6 +5,8 @@ import android.graphics.RectF;
 import android.media.SoundPool;
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -39,7 +41,8 @@ public class ViewController  implements Runnable,Observer {
     // This is used to help calculate the fps
     private long timeThisFrame;
     // This variable tracks the game frame rate
-    private long fps;
+
+    private long fps=1;
 
     // Game is paused at the start
     private boolean paused = true;
@@ -67,8 +70,8 @@ public class ViewController  implements Runnable,Observer {
     private int maxInvaderBullets = 10;
 
     // Up to 60 invaders
-    Invader[] invaders = new Invader[60];
-    int numInvaders = 0;
+    List<Invader> invaders = new ArrayList<>();
+    int numInvaders ;
 
     // The player's shelters are built from bricks
     private DefenceBrick[] bricks = new DefenceBrick[400];
@@ -214,7 +217,7 @@ public class ViewController  implements Runnable,Observer {
 
             if(i.getVisibility()) {
                 // Move the next invader
-                i.update(fps);
+                i.update(fps);//AQUI HACE DIVISION POR 0
 
                 // Does he want to take a shot?
                 if(i.takeAim(playerShip.getX(),
@@ -293,10 +296,10 @@ public class ViewController  implements Runnable,Observer {
 
         // Has the player's bullet hit an invader
         if(bullet.getStatus()) {
-            for (int i = 0; i < numInvaders; i++) {
-                if (invaders[i].getVisibility()) {
-                    if (RectF.intersects(bullet.getRect(), invaders[i].getRect())) {
-                        invaders[i].setInvisible();
+            for (Invader inv:invaders) {
+                if (inv.getVisibility()) {
+                    if (RectF.intersects(bullet.getRect(), inv.getRect())) {
+                        inv.setInvisible();
 //                        soundPool.play(invaderExplodeID, 1, 1, 0, 0, 1);
                         bullet.setInactive();
                         score = score + 100;
@@ -398,7 +401,7 @@ public class ViewController  implements Runnable,Observer {
         numInvaders = 0;
         for(int column = 0; column < 6; column ++ ){
             for(int row = 0; row < 5; row ++ ){
-                invaders[numInvaders] = new Invader(context, row, column, screenX, screenY);
+                invaders.add(new Invader(context, row, column, screenX, screenY));
                 numInvaders ++;
             }
         }
