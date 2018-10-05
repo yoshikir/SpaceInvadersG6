@@ -18,7 +18,7 @@ import es.urjc.jjve.spaceinvaders.view.SpaceInvadersView;
  * Created by Christian on 03/10/2018.
  */
 
-public class ViewController implements Observer,Runnable {
+public class ViewController  implements Runnable,Observer {
 
 
     // For sound FX
@@ -94,6 +94,7 @@ public class ViewController implements Observer,Runnable {
         this.initGame(context);
 
 
+
     }
 
     @Override
@@ -110,8 +111,8 @@ public class ViewController implements Observer,Runnable {
         while (playing) {
 
             // Capture the current time in milliseconds in startFrameTime
-            long startFrameTime = System.currentTimeMillis();
-
+            long startFrameTime = System.nanoTime();
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
             if(updateEntities()){
                 updateGame();
             }else{
