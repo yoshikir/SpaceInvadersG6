@@ -74,7 +74,7 @@ public class ViewController  implements Runnable,Observer {
     int numInvaders ;
 
     // The player's shelters are built from bricks
-    private DefenceBrick[] bricks = new DefenceBrick[400];
+    private List<DefenceBrick> bricks = new ArrayList<>();
     private int numBricks;
 
     private Thread gameThread = null;
@@ -114,7 +114,7 @@ public class ViewController  implements Runnable,Observer {
         while (playing) {
 
             // Capture the current time in milliseconds in startFrameTime
-            long startFrameTime = System.nanoTime();
+            long startFrameTime = System.currentTimeMillis();
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
             if(updateEntities()){
                 updateGame();
@@ -317,12 +317,12 @@ public class ViewController  implements Runnable,Observer {
         // Has an alien bullet hit a shelter brick
         for(int i = 0; i < invadersBullets.length; i++){
             if(invadersBullets[i].getStatus()){
-                for(int j = 0; j < numBricks; j++){
-                    if(bricks[j].getVisibility()){
-                        if(RectF.intersects(invadersBullets[i].getRect(), bricks[j].getRect())){
+                for(DefenceBrick brick:bricks){
+                    if(brick.getVisibility()){
+                        if(RectF.intersects(invadersBullets[i].getRect(), brick.getRect())){
                             // A collision has occurred
                             invadersBullets[i].setInactive();
-                            bricks[j].setInvisible();
+                            brick.setInvisible();
 //                            soundPool.play(damageShelterID, 1, 1, 0, 0, 1);
                         }
                     }
@@ -333,12 +333,12 @@ public class ViewController  implements Runnable,Observer {
 
         // Has a player bullet hit a shelter brick
         if(bullet.getStatus()){
-            for(int i = 0; i < numBricks; i++){
-                if(bricks[i].getVisibility()){
-                    if(RectF.intersects(bullet.getRect(), bricks[i].getRect())){
+            for(DefenceBrick brick:bricks){
+                if(brick.getVisibility()){
+                    if(RectF.intersects(bullet.getRect(), brick.getRect())){
                         // A collision has occurred
                         bullet.setInactive();
-                        bricks[i].setInvisible();
+                        brick.setInvisible();
 //                        soundPool.play(damageShelterID, 1, 1, 0, 0, 1);
                     }
                 }
@@ -411,7 +411,7 @@ public class ViewController  implements Runnable,Observer {
         for(int shelterNumber = 0; shelterNumber < 4; shelterNumber++){
             for(int column = 0; column < 10; column ++ ) {
                 for (int row = 0; row < 5; row++) {
-                    bricks[numBricks] = new DefenceBrick(row, column, shelterNumber, screenX, screenY);
+                    bricks.add( new DefenceBrick(row, column, shelterNumber, screenX, screenY));
                     numBricks++;
                 }
             }
