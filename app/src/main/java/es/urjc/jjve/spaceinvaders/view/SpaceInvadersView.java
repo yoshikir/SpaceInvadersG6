@@ -70,9 +70,12 @@ public class SpaceInvadersView extends SurfaceView {
 
     public SpaceInvadersView(Context context, int x, int y,Observer observer) {
 
+
+        super(context);
         // The next line of code asks the
         // SurfaceView class to set up our object.
-        super(context);
+        this.eventObservable= new ViewObservable();
+
         this.eventObservable.addObserver(observer);
 
         // Make a globally available copy of the context so we can use it in another method
