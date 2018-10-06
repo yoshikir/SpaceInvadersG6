@@ -12,6 +12,7 @@ import android.media.AudioManager;
 import android.media.SoundPool;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import java.io.IOException;
@@ -235,7 +236,11 @@ public class SpaceInvadersView extends SurfaceView {
 
         paint.setColor(Color.argb(255,  255, 255, 255));
         canvas = ourHolder.lockCanvas();
+
         canvas.drawRect(rect,paint);
+
+
+
 
         ourHolder.unlockCanvasAndPost(canvas);
     }
@@ -243,7 +248,11 @@ public class SpaceInvadersView extends SurfaceView {
 
     public void drawGameObject(Bitmap bitmap, float x, float y){
         // Make sure our drawing surface is valid or we crash
-        if (ourHolder.getSurface().isValid()) {
+        Surface surface = ourHolder.getSurface();
+
+        boolean surfValid = surface.isValid();
+
+        if (surfValid) { // ITS FALSE ALWAYS why?????????????
             // Lock the canvas ready to draw
             canvas = ourHolder.lockCanvas();
 

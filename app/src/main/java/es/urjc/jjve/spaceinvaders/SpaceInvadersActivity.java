@@ -35,7 +35,10 @@ public class SpaceInvadersActivity extends Activity {
         spaceInvadersController = new ViewController(this, size.x, size.y);
         setContentView(spaceInvadersController.getView());
 
+
     }
+
+
 
     // Este método se ejecuta cuando el jugador empieza el juego
     @Override
