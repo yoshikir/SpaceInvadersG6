@@ -126,14 +126,7 @@ public class ViewController  implements Runnable,Observer {
 
             updateGame();
 
-
-
-
             //ToDo show start again button if updateEntities returns false
-
-
-
-
 
 
             // Calculate the fps this frame
@@ -296,9 +289,6 @@ public class ViewController  implements Runnable,Observer {
         // Update the players bullet
         for (Bullet shipBull:playerShip.getActiveBullets()){
             shipBull.update(fps);
-            if(shipBull.getImpactPointY() < 0){
-                playerShip.removeBullet(shipBull);
-            }
             for (Invader inv:invaders) {
                 if (inv.getVisibility()) {
                     if (RectF.intersects(shipBull.getRect(), inv.getRect())) {
@@ -314,6 +304,9 @@ public class ViewController  implements Runnable,Observer {
                             initGame(this.context);                        }
                     }
                 }
+            }
+            if(shipBull.getImpactPointY() < 0){
+                playerShip.removeBullet(shipBull);
             }
         }
 
@@ -540,7 +533,7 @@ public class ViewController  implements Runnable,Observer {
                 //Instance a new bullet and shoot it
                 Bullet bullet = new Bullet(screenY);
                 if(playerShip.addBullet(bullet)){
-                    bullet.shoot(playerShip.getX()+playerShip.getLength()/2,0,bullet.UP);
+                    bullet.shoot(playerShip.getX()+playerShip.getLength()/2,screenY - 100,bullet.UP);
                 }
 
                 break;

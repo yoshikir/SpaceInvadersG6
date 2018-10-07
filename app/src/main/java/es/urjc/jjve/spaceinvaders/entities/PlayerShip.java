@@ -94,7 +94,7 @@ public class PlayerShip {
     }
 
     public boolean addBullet(Bullet b){
-        if(this.activeBullets.size()< 5){
+        if(this.activeBullets.size()< 1){
             this.activeBullets.add(b);
             return true;
         }else{

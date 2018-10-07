@@ -344,8 +344,9 @@ public class SpaceInvadersView extends SurfaceView {
 
         if(ourHolder.getSurface().isValid()){
             canvas = ourHolder.lockCanvas();
+        }else{
+            System.out.println(ourHolder.getSurface().isValid());
         }
-
 
     }
 
