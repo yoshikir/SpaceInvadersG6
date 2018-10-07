@@ -120,12 +120,13 @@ public class ViewController  implements Runnable,Observer {
             long startFrameTime = System.nanoTime();
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
             if(!paused){
-                if(updateEntities()){
-                    updateGame();
-                }else{
+                if(!updateEntities()) {
                     initGame(this.context);
                 }
+
             }
+
+            updateGame();
 
 
 
@@ -183,7 +184,6 @@ public class ViewController  implements Runnable,Observer {
 
         view.lockCanvas();
         view.drawBackground();
-
 
         view.setPaintGameObject();
 
@@ -437,7 +437,7 @@ public class ViewController  implements Runnable,Observer {
             }
         }
 
-       
+
     }
 
 
