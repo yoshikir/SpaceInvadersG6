@@ -94,9 +94,7 @@ public class ViewController  implements Runnable,Observer {
         this.screenX=x;
         this.screenY=y;
 
-        this.invaders = new ArrayList<>();
-        this.invadersBullets = new ArrayList<>();
-        this.bricks = new ArrayList<>();
+
 
         this.view= new SpaceInvadersView(context,x,y,this);
 
@@ -194,11 +192,20 @@ public class ViewController  implements Runnable,Observer {
 
         paintBricks();
 
-
+        paintBullets();
 
         paintShip();
         view.unlockCanvas();
 
+
+
+        view.drawGameObject("Score: " + score , 10,50);
+
+
+
+    }
+
+    private void paintBullets() {
         if(bullet.getStatus()){
             view.drawGameObject(bullet.getRect());
         }
@@ -208,11 +215,6 @@ public class ViewController  implements Runnable,Observer {
                 view.drawGameObject(bullet.getRect());
             }
         }
-
-        view.drawGameObject("Score: " + score , 10,50);
-
-
-
     }
 
 
@@ -404,6 +406,10 @@ public class ViewController  implements Runnable,Observer {
     public void initGame(Context context){
         // Make a new player space ship
         playerShip = new PlayerShip(context, screenX, screenY);
+
+        this.invaders = new ArrayList<>();
+        this.invadersBullets = new ArrayList<>();
+        this.bricks = new ArrayList<>();
 
         //view.drawGameObject(playerShip.getBitmap());
         // Reset the menace level
