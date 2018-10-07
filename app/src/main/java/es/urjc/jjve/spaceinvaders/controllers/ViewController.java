@@ -206,8 +206,9 @@ public class ViewController  implements Runnable,Observer {
     }
 
     private void paintBullets() {
-        if(bullet.getStatus()){
-            view.drawGameObject(bullet.getRect());
+
+        for(Bullet shipBull:playerShip.getActiveBullets()){
+            view.drawGameObject(shipBull.getRect());
         }
 
         for(Bullet bullet:invadersBullets){
@@ -238,7 +239,7 @@ public class ViewController  implements Runnable,Observer {
 
             if(i.getVisibility()) {
                 // Move the next invader
-                i.update(fps);//AQUI HACE DIVISION POR 0
+                i.update(fps);
 
                 // Does he want to take a shot?
                 if(i.takeAim(playerShip.getX(),
@@ -293,28 +294,44 @@ public class ViewController  implements Runnable,Observer {
         }
 
         // Update the players bullet
-        if(bullet.getStatus()){
-            bullet.update(fps);
+        for (Bullet shipBull:playerShip.getActiveBullets()){
+            shipBull.update(fps);
+            if(shipBull.getImpactPointY() < 0){
+                playerShip.removeBullet(shipBull);
+            }
+            for (Invader inv:invaders) {
+                if (inv.getVisibility()) {
+                    if (RectF.intersects(shipBull.getRect(), inv.getRect())) {
+                        inv.setInvisible();
+//                        soundPool.play(invaderExplodeID, 1, 1, 0, 0, 1);
+                        playerShip.removeBullet(shipBull);
+                        score = score + 100;
+
+                        // Has the player won
+                        if(score == numInvaders * 100){
+                            paused = true;
+                            score = 0;
+                            initGame(this.context);                        }
+                    }
+                }
+            }
         }
 
         // Has the player's bullet hit the top of the screen
-        if(bullet.getImpactPointY() < 0){
-            bullet.setInactive();
-        }
+
 
         // Update all the invaders bullets if active
         for(Bullet bullet:invadersBullets){
             if(bullet.getStatus()) {
                 bullet.update(fps);
             }
-        }
-
-        // Has an invaders bullet hit the bottom of the screen
-        for(Bullet bullet:invadersBullets){
             if(bullet.getImpactPointY() > screenY){
                 bullet.setInactive();
             }
         }
+
+        // Has an invaders bullet hit the bottom of the screen
+
 
         // Has the player's bullet hit an invader
         if(bullet.getStatus()) {
@@ -521,7 +538,10 @@ public class ViewController  implements Runnable,Observer {
             case "sht":
 
                 //Instance a new bullet and shoot it
-                // Bullet bullet = new Bullet();
+                Bullet bullet = new Bullet(screenY);
+                if(playerShip.addBullet(bullet)){
+                    bullet.shoot(playerShip.getX()+playerShip.getLength()/2,0,bullet.UP);
+                }
 
                 break;
         }

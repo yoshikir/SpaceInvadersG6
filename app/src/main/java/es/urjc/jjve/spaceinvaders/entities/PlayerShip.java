@@ -125,4 +125,8 @@ public class PlayerShip {
         rect.right = x + length;
 
     }
+
+    public void removeBullet(Bullet shipBull) {
+        this.activeBullets.remove(shipBull);
+    }
 }
