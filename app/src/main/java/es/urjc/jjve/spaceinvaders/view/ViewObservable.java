@@ -17,12 +17,14 @@ public class ViewObservable extends Observable {
     public void notifyMovement(int movement){
 
         notifyObservers(MOVEMENT_CODE+"|"+movement);
+        setChanged();
 
     }
 
     public void notifyShoot(){
 
         notifyObservers(SHOOT_CODE);
+        setChanged();
     }
 
 }

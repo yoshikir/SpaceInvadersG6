@@ -86,6 +86,8 @@ public class SpaceInvadersView extends SurfaceView {
         ourHolder = getHolder();
         paint = new Paint();
 
+
+
         screenX = x;
         screenY = y;
 
@@ -223,27 +225,24 @@ public class SpaceInvadersView extends SurfaceView {
 
     public void drawBackground(){
 
-        if (ourHolder.getSurface().isValid()) {
+
             // Lock the canvas ready to draw
-            canvas = ourHolder.lockCanvas();
             // Draw the background color
             canvas.drawColor(Color.argb(255, 26, 128, 182));
-            ourHolder.unlockCanvasAndPost(canvas);
-        }
+
+
     }
 
-    public void drawGameObject(RectF rect){
-
-        paint.setColor(Color.argb(255,  255, 255, 255));
-        canvas = ourHolder.lockCanvas();
-
-        canvas.drawRect(rect,paint);
+    public void drawGameObject(RectF rect) {
 
 
 
 
-        ourHolder.unlockCanvasAndPost(canvas);
+        canvas.drawRect(rect, paint);
+
+
     }
+
 
 
     public void drawGameObject(Bitmap bitmap, float x, float y){
@@ -254,28 +253,27 @@ public class SpaceInvadersView extends SurfaceView {
 
         if (surfValid) { // ITS FALSE ALWAYS why?????????????
             // Lock the canvas ready to draw
-            canvas = ourHolder.lockCanvas();
+
 
             // Choose the brush color for drawing
-            paint.setColor(Color.argb(255,  255, 255, 255));
+
             // Now draw the Game Object
             canvas.drawBitmap(bitmap, x, y , paint);
 
 
             // Draw everything to the screen
-            ourHolder.unlockCanvasAndPost(canvas);
         }
     }
 
     public void drawGameObject(String text, int x, int y){
 
-        canvas = ourHolder.lockCanvas();
-        paint.setColor(Color.argb(255,  249, 129, 0));
+
+
         paint.setTextSize(40);
 
         canvas.drawText(text,x,y,paint);
 
-        ourHolder.unlockCanvasAndPost(canvas);
+
 
     }
 
@@ -339,5 +337,24 @@ public class SpaceInvadersView extends SurfaceView {
         }
 
         return true;
+    }
+
+
+    public void lockCanvas(){
+
+        if(ourHolder.getSurface().isValid()){
+            canvas = ourHolder.lockCanvas();
+        }
+
+
+    }
+
+    public void setPaintGameObject(){
+         paint.setColor(Color.argb(255,  249, 129, 0));
+    }
+
+
+    public void unlockCanvas(){
+        ourHolder.unlockCanvasAndPost(canvas);
     }
 }

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.regex.Pattern;
 
 import es.urjc.jjve.spaceinvaders.entities.Bullet;
 import es.urjc.jjve.spaceinvaders.entities.DefenceBrick;
@@ -44,7 +45,7 @@ public class ViewController  implements Runnable,Observer {
     private long timeThisFrame;
     // This variable tracks the game frame rate
 
-    private long fps=1;
+    private long fps=20;
 
     // Game is paused at the start
     private boolean paused = true;
@@ -99,6 +100,7 @@ public class ViewController  implements Runnable,Observer {
 
         this.view= new SpaceInvadersView(context,x,y,this);
 
+
         this.context=context;
         this.initGame(context);
 
@@ -106,12 +108,7 @@ public class ViewController  implements Runnable,Observer {
 
     }
 
-    @Override
-    public void update(Observable observable, Object o) {
 
-        //parsea o y decide que modifica
-
-    }
 
     @Override
     public void run() {
@@ -122,12 +119,12 @@ public class ViewController  implements Runnable,Observer {
             // Capture the current time in milliseconds in startFrameTime
             long startFrameTime = System.nanoTime();
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-          //  if(!paused){
+            if(!paused){
                 if(updateEntities()){
                     updateGame();
                 }else{
                     initGame(this.context);
-               // }
+                }
             }
 
 
@@ -183,11 +180,24 @@ public class ViewController  implements Runnable,Observer {
     public void updateGame(){
 
 
+
+        view.lockCanvas();
         view.drawBackground();
+
+
+        view.setPaintGameObject();
 
         paintInvaders();
 
+
+
+
         paintBricks();
+
+
+
+        paintShip();
+        view.unlockCanvas();
 
         if(bullet.getStatus()){
             view.drawGameObject(bullet.getRect());
@@ -395,6 +405,7 @@ public class ViewController  implements Runnable,Observer {
         // Make a new player space ship
         playerShip = new PlayerShip(context, screenX, screenY);
 
+        //view.drawGameObject(playerShip.getBitmap());
         // Reset the menace level
 
 
@@ -426,17 +437,22 @@ public class ViewController  implements Runnable,Observer {
             }
         }
 
-        paintInvaders();
-      //  paintBricks();
-        paintShip();
+       
     }
+
+
 
     private void paintShip() {
 
+
         view.drawGameObject(playerShip.getBitmap(),playerShip.getX(),screenY - 50);
+
     }
 
     public void paintInvaders(){
+
+
+
         for(Invader i:invaders){
             if(i.getVisibility()) {
 
@@ -444,13 +460,15 @@ public class ViewController  implements Runnable,Observer {
 
             }
         }
+
     }
 
     public void paintBricks(){
+
         for(DefenceBrick b:bricks){
             try {
                 if(b.getVisibility()) {
-                    view.drawGameObject(b.getRect());
+               //     view.drawGameObject(b.getRect());
                 }
             }catch (RuntimeException e){
 
@@ -460,7 +478,10 @@ public class ViewController  implements Runnable,Observer {
 
         }
 
+
     }
+
+
 
     public SpaceInvadersView getView() {
         return view;
@@ -468,5 +489,36 @@ public class ViewController  implements Runnable,Observer {
 
     public void setView(SpaceInvadersView view) {
         this.view = view;
+    }
+
+    @Override
+    public void update(Observable observable, Object o) {
+
+
+        String splitter = Pattern.quote("|");
+        String[] split = ((String) o).split(splitter);
+
+        switch (split[0]){
+
+            case "mov":
+
+                if (paused){
+                    paused= false;
+
+                }
+                playerShip.setMovementState(Integer.parseInt(split[1]));
+
+                playerShip.update(fps);
+
+                break;
+            case "sht":
+
+                //Instance a new bullet and shoot it
+                // Bullet bullet = new Bullet();
+
+                break;
+        }
+        //parsea o y decide que modifica
+
     }
 }
