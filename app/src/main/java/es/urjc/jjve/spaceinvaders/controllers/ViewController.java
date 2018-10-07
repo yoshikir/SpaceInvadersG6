@@ -285,6 +285,7 @@ public class ViewController  implements Runnable,Observer {
                     }
 
                 }
+                return true;
 
 
             }
@@ -474,7 +475,7 @@ public class ViewController  implements Runnable,Observer {
         for(DefenceBrick b:bricks){
             try {
                 if(b.getVisibility()) {
-               //     view.drawGameObject(b.getRect());
+                    view.drawGameObject(b.getRect());
                 }
             }catch (RuntimeException e){
 
