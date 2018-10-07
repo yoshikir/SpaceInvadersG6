@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Inicio">
+
+    <TextView
+        android:id="@+id/pregunta"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginEnd="114dp"
+        android:layout_marginStart="115dp"
+        android:layout_marginTop="68dp"
+        android:text="¿Eres mayor de 13 años?"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.543"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/si"
+        android:layout_width="79dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="371dp"
+        android:layout_marginStart="128dp"
+        android:layout_marginTop="53dp"
+        android:onClick="onClick"
+        android:text="SI"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pregunta"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <Button
+        android:id="@+id/no"
+        android:layout_width="79dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="372dp"
+        android:layout_marginEnd="64dp"
+        android:layout_marginStart="93dp"
+        android:layout_marginTop="52dp"
+        android:onClick="onClick"
+        android:text="NO"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.858"
+        app:layout_constraintStart_toEndOf="@+id/si"
+        app:layout_constraintTop_toBottomOf="@+id/pregunta"
+        app:layout_constraintVertical_bias="0.0" />
+
+</android.support.constraint.ConstraintLayout>

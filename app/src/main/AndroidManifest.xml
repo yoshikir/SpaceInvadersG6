@@ -11,13 +11,18 @@
         android:hardwareAccelerated="false"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".SpaceInvadersActivity"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+        <activity android:name=".Inicio"
             android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".SpaceInvadersActivity"
+            android:label="actividadSpace"
+            android:screenOrientation="landscape">
         </activity>
     </application>
 

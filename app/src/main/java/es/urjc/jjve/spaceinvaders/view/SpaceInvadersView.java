@@ -83,7 +83,7 @@ public class SpaceInvadersView extends SurfaceView {
         this.context = context;
 
         // Initialize ourHolder and paint objects
-        ourHolder = getHolder();
+        ourHolder = this.getHolder();
         paint = new Paint();
 
 
@@ -228,9 +228,12 @@ public class SpaceInvadersView extends SurfaceView {
 
             // Lock the canvas ready to draw
             // Draw the background color
-            canvas.drawColor(Color.argb(255, 26, 128, 182));
-
-
+        try {
+            if(canvas != null)
+                canvas.drawColor(Color.argb(255, 0, 0, 0));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     public void drawGameObject(RectF rect) {
@@ -342,11 +345,16 @@ public class SpaceInvadersView extends SurfaceView {
 
     public void lockCanvas(){
 
-        if(ourHolder.getSurface().isValid()){
-            canvas = ourHolder.lockCanvas();
-        }else{
-            System.out.println(ourHolder.getSurface().isValid());
+        try {
+            if(ourHolder.getSurface().isValid()){
+                canvas = ourHolder.lockCanvas();
+            }else{
+                System.out.println(ourHolder.getSurface().isValid());
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
+
 
     }
 

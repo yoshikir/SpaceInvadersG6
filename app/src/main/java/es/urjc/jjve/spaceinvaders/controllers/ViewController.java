@@ -21,7 +21,7 @@ import es.urjc.jjve.spaceinvaders.view.SpaceInvadersView;
  * Created by Christian on 03/10/2018.
  */
 
-public class ViewController  implements Runnable,Observer {
+public class ViewController implements Runnable, Observer {
 
 
     // For sound FX
@@ -41,11 +41,14 @@ public class ViewController  implements Runnable,Observer {
 
     private static final int MAX_INVADER_BULLETS = 300;
 
+    private boolean underage;
+
+
     // This is used to help calculate the fps
     private long timeThisFrame;
     // This variable tracks the game frame rate
 
-    private long fps=20;
+    private long fps = 20;
 
     // Game is paused at the start
     private boolean paused = true;
@@ -63,21 +66,20 @@ public class ViewController  implements Runnable,Observer {
     private int score;
 
 
-
     // The player's bullet
     private Bullet bullet;
 
     // The invaders bullets
-    private List<Bullet> invadersBullets ;
+    private List<Bullet> invadersBullets;
     private int nextBullet;
     private int maxInvaderBullets = 10;
 
     // Up to 60 invaders
-    List<Invader> invaders  ;
+    List<Invader> invaders;
     int numInvaders = 0;
 
     // The player's shelters are built from bricks
-    private List<DefenceBrick> bricks ;
+    private List<DefenceBrick> bricks;
     private int numBricks;
 
     private Thread gameThread = null;
@@ -88,24 +90,21 @@ public class ViewController  implements Runnable,Observer {
 
     private Context context;
 
-    public ViewController(Context context, int x, int y){
+    public ViewController(Context context, int x, int y) {
 
 
-        this.screenX=x;
-        this.screenY=y;
+        this.screenX = x;
+        this.screenY = y;
 
 
+        this.view = new SpaceInvadersView(context, x, y, this);
 
-        this.view= new SpaceInvadersView(context,x,y,this);
 
-
-        this.context=context;
+        this.context = context;
         this.initGame(context);
 
 
-
     }
-
 
 
     @Override
@@ -117,8 +116,8 @@ public class ViewController  implements Runnable,Observer {
             // Capture the current time in milliseconds in startFrameTime
             long startFrameTime = System.nanoTime();
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-            if(!paused){
-                if(!updateEntities()) {
+            if (!paused) {
+                if (!updateEntities()) {
                     initGame(this.context);
                 }
 
@@ -169,8 +168,7 @@ public class ViewController  implements Runnable,Observer {
      * Should be called when the entity is modified only, ToDo for next sprint, update entities on screen only when they are modified
      */
 
-    public void updateGame(){
-
+    public void updateGame() {
 
 
         view.lockCanvas();
@@ -181,8 +179,6 @@ public class ViewController  implements Runnable,Observer {
         paintInvaders();
 
 
-
-
         paintBricks();
 
         paintBullets();
@@ -191,21 +187,19 @@ public class ViewController  implements Runnable,Observer {
         view.unlockCanvas();
 
 
-
-        view.drawGameObject("Score: " + score , 10,50);
-
+        view.drawGameObject("Score: " + score, 10, 50);
 
 
     }
 
     private void paintBullets() {
 
-        for(Bullet shipBull:playerShip.getActiveBullets()){
+        for (Bullet shipBull : playerShip.getActiveBullets()) {
             view.drawGameObject(shipBull.getRect());
         }
 
-        for(Bullet bullet:invadersBullets){
-            if(bullet.getStatus()) {
+        for (Bullet bullet : invadersBullets) {
+            if (bullet.getStatus()) {
                 view.drawGameObject(bullet.getRect());
             }
         }
@@ -218,7 +212,7 @@ public class ViewController  implements Runnable,Observer {
      * also it checks if the invader has the opportunity to shoot
      * updates the bullet possition depending on the fps attribute
      */
-    public boolean updateEntities(){
+    public boolean updateEntities() {
 
         //checks if any entity has reached a limit or another entity
         boolean bumpedEntity = false;
@@ -228,18 +222,18 @@ public class ViewController  implements Runnable,Observer {
 
         //For each invader, we check if its an active one and then we check if it has the opportunity to shoot
         //if the invader has reached the screen limit, it reverses the direction and goes down
-        for(Invader i:invaders){
+        for (Invader i : invaders) {
 
-            if(i.getVisibility()) {
+            if (i.getVisibility()) {
                 // Move the next invader
                 i.update(fps);
 
                 // Does he want to take a shot?
-                if(i.takeAim(playerShip.getX(),
-                        playerShip.getLength())){
+                if (i.takeAim(playerShip.getX(),
+                        playerShip.getLength())) {
 
                     // If so try and spawn a bullet
-                    if(invadersBullets.get(nextBullet).shoot(i.getX()
+                    if (invadersBullets.get(nextBullet).shoot(i.getX()
                                     + i.getLength() / 2,
                             i.getY(), bullet.DOWN)) {
 
@@ -258,7 +252,7 @@ public class ViewController  implements Runnable,Observer {
 
                 // If that move caused them to bump the screen change bumped to true
                 if (i.getX() > screenX - i.getLength()
-                        || i.getX() < 0){
+                        || i.getX() < 0) {
 
                     bumpedEntity = true;
 
@@ -268,13 +262,13 @@ public class ViewController  implements Runnable,Observer {
             //Checks if an invader has touched the playership
 
 
-            if(bumpedEntity){
+            if (bumpedEntity) {
 
                 // Move all the invaders down and change direction
-                for(Invader inv:invaders){
+                for (Invader inv : invaders) {
                     inv.dropDownAndReverse();
                     // Have the invaders landed
-                    if(RectF.intersects(i.getRect(),playerShip.getRect())) {
+                    if (RectF.intersects(i.getRect(), playerShip.getRect())) {
                         return false;
                     }
 
@@ -286,107 +280,112 @@ public class ViewController  implements Runnable,Observer {
 
         }
 
-        // Update the players bullet
-        for (Bullet shipBull:playerShip.getActiveBullets()){
-            shipBull.update(fps);
-            for (Invader inv:invaders) {
-                if (inv.getVisibility()) {
-                    if (RectF.intersects(shipBull.getRect(), inv.getRect())) {
-                        inv.setInvisible();
-//                        soundPool.play(invaderExplodeID, 1, 1, 0, 0, 1);
-                        playerShip.removeBullet(shipBull);
-                        score = score + 100;
+        if(!underage) {
 
-                        // Has the player won
-                        if(score == numInvaders * 100){
-                            paused = true;
-                            score = 0;
-                            initGame(this.context);                        }
+            // Update the players bullet
+            for (Bullet shipBull : playerShip.getActiveBullets()) {
+                shipBull.update(fps);
+                for (Invader inv : invaders) {
+                    if (inv.getVisibility()) {
+                        if (RectF.intersects(shipBull.getRect(), inv.getRect())) {
+                            inv.setInvisible();
+//                        soundPool.play(invaderExplodeID, 1, 1, 0, 0, 1);
+                            playerShip.removeBullet(shipBull);
+                            score = score + 100;
+
+                            // Has the player won
+                            if (score == numInvaders * 100) {
+                                paused = true;
+                                score = 0;
+                                initGame(this.context);
+                            }
+                        }
                     }
                 }
-            }
-            if(shipBull.getImpactPointY() < 0){
-                playerShip.removeBullet(shipBull);
-            }
-        }
-
-        // Has the player's bullet hit the top of the screen
-
-
-        // Update all the invaders bullets if active
-        for(Bullet bullet:invadersBullets){
-            if(bullet.getStatus()) {
-                bullet.update(fps);
-            }
-            if(bullet.getImpactPointY() > screenY){
-                bullet.setInactive();
-            }
-        }
-
-        // Has an invaders bullet hit the bottom of the screen
-
-
-        // Has the player's bullet hit an invader
-        if(bullet.getStatus()) {
-            for (Invader inv:invaders) {
-                if (inv.getVisibility()) {
-                    if (RectF.intersects(bullet.getRect(), inv.getRect())) {
-                        inv.setInvisible();
-//                        soundPool.play(invaderExplodeID, 1, 1, 0, 0, 1);
-                        bullet.setInactive();
-                        score = score + 100;
-
-                        // Has the player won
-                        if(score == numInvaders * 100){
-                            paused = true;
-                            score = 0;
-                            initGame(this.context);                        }
-                    }
+                if (shipBull.getImpactPointY() < 0) {
+                    playerShip.removeBullet(shipBull);
                 }
             }
-        }
 
-        // Has an alien bullet hit a shelter brick
-        for(Bullet bullet:invadersBullets){
-            if(bullet.getStatus()){
-                for(DefenceBrick brick:bricks){
-                    if(brick.getVisibility()){
-                        if(RectF.intersects(bullet.getRect(), brick.getRect())){
-                            // A collision has occurred
+            // Has the player's bullet hit the top of the screen
+
+
+            // Update all the invaders bullets if active
+            for (Bullet bullet : invadersBullets) {
+                if (bullet.getStatus()) {
+                    bullet.update(fps);
+                }
+                if (bullet.getImpactPointY() > screenY) {
+                    bullet.setInactive();
+                }
+            }
+
+            // Has an invaders bullet hit the bottom of the screen
+
+
+            // Has the player's bullet hit an invader
+            if (bullet.getStatus()) {
+                for (Invader inv : invaders) {
+                    if (inv.getVisibility()) {
+                        if (RectF.intersects(bullet.getRect(), inv.getRect())) {
+                            inv.setInvisible();
+//                        soundPool.play(invaderExplodeID, 1, 1, 0, 0, 1);
                             bullet.setInactive();
-                            brick.setInvisible();
-//                            soundPool.play(damageShelterID, 1, 1, 0, 0, 1);
+                            score = score + 100;
+
+                            // Has the player won
+                            if (score == numInvaders * 100) {
+                                paused = true;
+                                score = 0;
+                                initGame(this.context);
+                            }
                         }
                     }
                 }
             }
 
-        }
+            // Has an alien bullet hit a shelter brick
+            for (Bullet bullet : invadersBullets) {
+                if (bullet.getStatus()) {
+                    for (DefenceBrick brick : bricks) {
+                        if (brick.getVisibility()) {
+                            if (RectF.intersects(bullet.getRect(), brick.getRect())) {
+                                // A collision has occurred
+                                bullet.setInactive();
+                                brick.setInvisible();
+//                            soundPool.play(damageShelterID, 1, 1, 0, 0, 1);
+                            }
+                        }
+                    }
+                }
 
-        // Has a player bullet hit a shelter brick
-        if(bullet.getStatus()){
-            for(DefenceBrick brick:bricks){
-                if(brick.getVisibility()){
-                    if(RectF.intersects(bullet.getRect(), brick.getRect())){
-                        // A collision has occurred
-                        bullet.setInactive();
-                        brick.setInvisible();
+            }
+
+            // Has a player bullet hit a shelter brick
+            if (bullet.getStatus()) {
+                for (DefenceBrick brick : bricks) {
+                    if (brick.getVisibility()) {
+                        if (RectF.intersects(bullet.getRect(), brick.getRect())) {
+                            // A collision has occurred
+                            bullet.setInactive();
+                            brick.setInvisible();
 //                        soundPool.play(damageShelterID, 1, 1, 0, 0, 1);
+                        }
                     }
                 }
             }
-        }
 
-        // Has an invader bullet hit the player ship
-        for(Bullet bullet:invadersBullets){
-            if(bullet.getStatus()){
-                if(RectF.intersects(playerShip.getRect(), bullet.getRect())){
-                    bullet.setInactive();
+            // Has an invader bullet hit the player ship
+            for (Bullet bullet : invadersBullets) {
+                if (bullet.getStatus()) {
+                    if (RectF.intersects(playerShip.getRect(), bullet.getRect())) {
+                        bullet.setInactive();
 
-                    return false;
+                        return false;
 //                  soundPool.play(playerExplodeID, 1, 1, 0, 0, 1);
 
 
+                    }
                 }
             }
         }
@@ -414,7 +413,7 @@ public class ViewController  implements Runnable,Observer {
 
     }
 
-    public void initGame(Context context){
+    public void initGame(Context context) {
         // Make a new player space ship
         playerShip = new PlayerShip(context, screenX, screenY);
 
@@ -425,30 +424,31 @@ public class ViewController  implements Runnable,Observer {
         //view.drawGameObject(playerShip.getBitmap());
         // Reset the menace level
 
+        if (!underage) {
+            // Prepare the players bullet
+            bullet = new Bullet(screenY);
 
-        // Prepare the players bullet
-        bullet = new Bullet(screenY);
-
-        // Initialize the invadersBullets array
-        for(int i = 0; i < MAX_INVADER_BULLETS; i++){
-            invadersBullets.add( new Bullet(screenY));
+            // Initialize the invadersBullets array
+            for (int i = 0; i < MAX_INVADER_BULLETS; i++) {
+                invadersBullets.add(new Bullet(screenY));
+            }
         }
-
         // Build an army of invaders
         numInvaders = 0;
-        for(int column = 0; column < 6; column ++ ){
-            for(int row = 0; row < 5; row ++ ){
+        for (int column = 0; column < 6; column++) {
+            for (int row = 0; row < 5; row++) {
                 invaders.add(new Invader(context, row, column, screenX, screenY));
-                numInvaders ++;
+                numInvaders++;
             }
         }
 
+
         // Build the shelters
         numBricks = 0;
-        for(int shelterNumber = 0; shelterNumber < 4; shelterNumber++){
-            for(int column = 0; column < 10; column ++ ) {
+        for (int shelterNumber = 0; shelterNumber < 4; shelterNumber++) {
+            for (int column = 0; column < 10; column++) {
                 for (int row = 0; row < 5; row++) {
-                    bricks.add( new DefenceBrick(row, column, shelterNumber, screenX, screenY));
+                    bricks.add(new DefenceBrick(row, column, shelterNumber, screenX, screenY));
                     numBricks++;
                 }
             }
@@ -458,20 +458,18 @@ public class ViewController  implements Runnable,Observer {
     }
 
 
-
     private void paintShip() {
 
 
-        view.drawGameObject(playerShip.getBitmap(),playerShip.getX(),screenY - 50);
+        view.drawGameObject(playerShip.getBitmap(), playerShip.getX(), screenY - 50);
 
     }
 
-    public void paintInvaders(){
+    public void paintInvaders() {
 
 
-
-        for(Invader i:invaders){
-            if(i.getVisibility()) {
+        for (Invader i : invaders) {
+            if (i.getVisibility()) {
 
                 this.view.drawGameObject(i.getBitmap(), i.getX(), i.getY());
 
@@ -480,14 +478,14 @@ public class ViewController  implements Runnable,Observer {
 
     }
 
-    public void paintBricks(){
+    public void paintBricks() {
 
-        for(DefenceBrick b:bricks){
+        for (DefenceBrick b : bricks) {
             try {
-                if(b.getVisibility()) {
+                if (b.getVisibility()) {
                     view.drawGameObject(b.getRect());
                 }
-            }catch (RuntimeException e){
+            } catch (RuntimeException e) {
 
                 System.out.println("Peta" + b.toString());
 
@@ -497,7 +495,6 @@ public class ViewController  implements Runnable,Observer {
 
 
     }
-
 
 
     public SpaceInvadersView getView() {
@@ -515,12 +512,12 @@ public class ViewController  implements Runnable,Observer {
         String splitter = Pattern.quote("|");
         String[] split = ((String) o).split(splitter);
 
-        switch (split[0]){
+        switch (split[0]) {
 
             case "mov":
 
-                if (paused){
-                    paused= false;
+                if (paused) {
+                    paused = false;
 
                 }
                 playerShip.setMovementState(Integer.parseInt(split[1]));
@@ -530,15 +527,25 @@ public class ViewController  implements Runnable,Observer {
                 break;
             case "sht":
 
-                //Instance a new bullet and shoot it
-                Bullet bullet = new Bullet(screenY);
-                if(playerShip.addBullet(bullet)){
-                    bullet.shoot(playerShip.getX()+playerShip.getLength()/2,screenY - 100,bullet.UP);
+                if (!underage) {
+                    //Instance a new bullet and shoot it
+                    Bullet bullet = new Bullet(screenY);
+                    if (playerShip.addBullet(bullet)) {
+                        bullet.shoot(playerShip.getX() + playerShip.getLength() / 2, screenY - 100, bullet.UP);
+                    }
                 }
 
                 break;
         }
         //parsea o y decide que modifica
 
+    }
+
+    public boolean isUnderage() {
+        return underage;
+    }
+
+    public void setUnderage(boolean underage) {
+        this.underage = underage;
     }
 }

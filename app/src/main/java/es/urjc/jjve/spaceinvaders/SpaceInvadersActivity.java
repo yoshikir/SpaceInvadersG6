@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.view.Display;
+import android.view.WindowManager;
 
 import es.urjc.jjve.spaceinvaders.controllers.ViewController;
 import es.urjc.jjve.spaceinvaders.view.SpaceInvadersView;
@@ -20,6 +21,7 @@ public class SpaceInvadersActivity extends Activity {
     // También tendrá la lógica del juego → Lógica a través de controladores
     // y responderá a los toques a la pantalla (Event Handler)
     ViewController spaceInvadersController;
+    private boolean underage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,12 +29,14 @@ public class SpaceInvadersActivity extends Activity {
 
         // Obtener un objeto de Display para acceder a los detalles de la pantalla
         Display display = getWindowManager().getDefaultDisplay();
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         // Cargar la resolución a un objeto de Point
         Point size = new Point();
         display.getSize(size);
 
         //Inicializar gameView y lo establece como la visualización
         spaceInvadersController = new ViewController(this, size.x, size.y);
+        spaceInvadersController.setUnderage(getIntent().getExtras().getBoolean("underage"));
         setContentView(spaceInvadersController.getView());
 
 
@@ -56,5 +60,9 @@ public class SpaceInvadersActivity extends Activity {
 
         // Le dice al método de pausa del gameView que se ejecute
         spaceInvadersController.pause();
+    }
+
+    public void bulletsOn(boolean on){
+        this.underage = underage;
     }
 }
