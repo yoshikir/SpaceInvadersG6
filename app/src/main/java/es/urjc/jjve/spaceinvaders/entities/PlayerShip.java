@@ -5,6 +5,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.RectF;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import es.urjc.jjve.spaceinvaders.R;
 
 public class PlayerShip {
@@ -12,6 +15,8 @@ public class PlayerShip {
 
     // La nave espacial del jugador será representada por un Bitmap
     private Bitmap bitmap;
+
+    private List<Bullet> activeBullets= new ArrayList<>();
 
     // Que tan ancho y alto puede llegar nuestra nave espacial
     private float length;
@@ -86,6 +91,19 @@ public class PlayerShip {
     // espacial va a la izquierda, la derecha o no se mueve
     public void setMovementState(int state){
         shipMoving = state;
+    }
+
+    public boolean addBullet(Bullet b){
+        if(this.activeBullets.size()< 5){
+            this.activeBullets.add(b);
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public List<Bullet> getActiveBullets(){
+        return activeBullets;
     }
 
     // Este método de update será llamado desde el update en SpaceInvadersView
