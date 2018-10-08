@@ -260,8 +260,6 @@ public class ViewController implements Runnable, Observer {
             }
 
             //Checks if an invader has touched the playership
-
-
             if (bumpedEntity) {
 
                 // Move all the invaders down and change direction
@@ -289,7 +287,7 @@ public class ViewController implements Runnable, Observer {
                     if (inv.getVisibility()) {
                         if (RectF.intersects(shipBull.getRect(), inv.getRect())) {
                             inv.setInvisible();
-//                        soundPool.play(invaderExplodeID, 1, 1, 0, 0, 1);
+//                          soundPool.play(invaderExplodeID, 1, 1, 0, 0, 1);
                             playerShip.removeBullet(shipBull);
                             score = score + 100;
 
@@ -324,7 +322,7 @@ public class ViewController implements Runnable, Observer {
 
 
             // Has the player's bullet hit an invader
-            if (bullet.getStatus()) {
+            if (this.bullet.getStatus()) {
                 for (Invader inv : invaders) {
                     if (inv.getVisibility()) {
                         if (RectF.intersects(bullet.getRect(), inv.getRect())) {
@@ -362,14 +360,17 @@ public class ViewController implements Runnable, Observer {
             }
 
             // Has a player bullet hit a shelter brick
-            if (bullet.getStatus()) {
-                for (DefenceBrick brick : bricks) {
-                    if (brick.getVisibility()) {
-                        if (RectF.intersects(bullet.getRect(), brick.getRect())) {
-                            // A collision has occurred
-                            bullet.setInactive();
-                            brick.setInvisible();
-//                        soundPool.play(damageShelterID, 1, 1, 0, 0, 1);
+
+            for (Bullet bullet:playerShip.getActiveBullets()) {
+                if (bullet.getStatus()) {
+                    for (DefenceBrick brick : bricks) {
+                        if (brick.getVisibility()) {
+                            if (RectF.intersects(bullet.getRect(), brick.getRect())) {
+                                // A collision has occurred
+                                bullet.setInactive();
+                                brick.setInvisible();
+//                          soundPool.play(damageShelterID, 1, 1, 0, 0, 1);
+                            }
                         }
                     }
                 }
