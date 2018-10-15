@@ -69,7 +69,7 @@ public class SpaceInvadersView extends SurfaceView {
     // When did we last play a menacing sound
     private long lastMenaceTime = System.currentTimeMillis();
 
-    public SpaceInvadersView(Context context, int x, int y,Observer observer) {
+    public SpaceInvadersView(Context context, int x, int y) {
 
 
         super(context);
@@ -77,7 +77,6 @@ public class SpaceInvadersView extends SurfaceView {
         // SurfaceView class to set up our object.
         this.eventObservable= new ViewObservable();
 
-        this.eventObservable.addObserver(observer);
 
         // Make a globally available copy of the context so we can use it in another method
         this.context = context;
@@ -365,5 +364,10 @@ public class SpaceInvadersView extends SurfaceView {
 
     public void unlockCanvas(){
         ourHolder.unlockCanvasAndPost(canvas);
+    }
+
+
+    public void setObserver(Observer obs){
+        this.eventObservable.addObserver(obs);
     }
 }

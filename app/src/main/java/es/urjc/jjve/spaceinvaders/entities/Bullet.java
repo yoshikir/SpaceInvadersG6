@@ -81,4 +81,9 @@ public class Bullet {
     }
 
 
+    public void changeDir() {
+
+        this.heading = 1-this.heading;
+
+    }
 }

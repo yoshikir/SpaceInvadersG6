@@ -21,6 +21,7 @@ public class SpaceInvadersActivity extends Activity {
     // También tendrá la lógica del juego → Lógica a través de controladores
     // y responderá a los toques a la pantalla (Event Handler)
     ViewController spaceInvadersController;
+    SpaceInvadersView spaceView;
     private boolean underage;
 
     @Override
@@ -35,9 +36,13 @@ public class SpaceInvadersActivity extends Activity {
         display.getSize(size);
 
         //Inicializar gameView y lo establece como la visualización
-        spaceInvadersController = new ViewController(this, size.x, size.y);
+        spaceView = new SpaceInvadersView(this,size.x,size.y);
+        spaceInvadersController = new ViewController(this, size.x, size.y,spaceView);
         spaceInvadersController.setUnderage(getIntent().getExtras().getBoolean("underage"));
-        setContentView(spaceInvadersController.getView());
+        spaceView.setObserver(spaceInvadersController);
+
+
+        setContentView(spaceView);
 
 
     }
