@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
 
+import es.urjc.jjve.spaceinvaders.controllers.ViewController;
 import es.urjc.jjve.spaceinvaders.entities.Bullet;
 import es.urjc.jjve.spaceinvaders.entities.DefenceBrick;
 import es.urjc.jjve.spaceinvaders.entities.Invader;
@@ -60,7 +61,7 @@ public class SpaceInvadersView extends SurfaceView {
 //    private int uhID = -1;
 //    private int ohID = -1;
 
-
+    private ViewController spaceInvadersController;
 
     // How menacing should the sound be?
     private long menaceInterval = 1000;
@@ -69,7 +70,7 @@ public class SpaceInvadersView extends SurfaceView {
     // When did we last play a menacing sound
     private long lastMenaceTime = System.currentTimeMillis();
 
-    public SpaceInvadersView(Context context, int x, int y) {
+    public SpaceInvadersView(Context context, int x, int y, Boolean underage) {
 
 
         super(context);
@@ -124,6 +125,9 @@ public class SpaceInvadersView extends SurfaceView {
 //            // Print an error message to the console
 //            Log.e("error", "failed to load sound files");
 //        }
+
+
+
 
 
     }
@@ -369,5 +373,9 @@ public class SpaceInvadersView extends SurfaceView {
 
     public void setObserver(Observer obs){
         this.eventObservable.addObserver(obs);
+    }
+
+    public ViewController getController() {
+        return this.spaceInvadersController;
     }
 }

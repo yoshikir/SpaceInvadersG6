@@ -1,9 +1,11 @@
 package es.urjc.jjve.spaceinvaders;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.view.Display;
+import android.view.SurfaceHolder;
 import android.view.WindowManager;
 
 import es.urjc.jjve.spaceinvaders.controllers.ViewController;
@@ -20,9 +22,12 @@ public class SpaceInvadersActivity extends Activity {
     // spaceInvadersView será la visualización del juego
     // También tendrá la lógica del juego → Lógica a través de controladores
     // y responderá a los toques a la pantalla (Event Handler)
-    ViewController spaceInvadersController;
-    SpaceInvadersView spaceView;
+    private ViewController spaceInvadersController;
+    private SpaceInvadersView spaceView;
     private boolean underage;
+    private int xSize;
+    private int ySize;
+    private Context context= this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,18 +39,41 @@ public class SpaceInvadersActivity extends Activity {
         // Cargar la resolución a un objeto de Point
         Point size = new Point();
         display.getSize(size);
+        this.xSize=size.x;
+        this.ySize=size.y;
 
         //Inicializar gameView y lo establece como la visualización
-        spaceView = new SpaceInvadersView(this,size.x,size.y);
-        spaceInvadersController = new ViewController(this, size.x, size.y,spaceView);
-        spaceInvadersController.setUnderage(getIntent().getExtras().getBoolean("underage"));
-        spaceView.setObserver(spaceInvadersController);
+        spaceView = new SpaceInvadersView(this,size.x,size.y,getIntent().getExtras().getBoolean("underage"));
+
 
 
         setContentView(spaceView);
 
+        spaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
+            @Override
+            public void surfaceCreated(SurfaceHolder holder) {
+                spaceInvadersController = new ViewController(context, xSize, ySize,spaceView);
+                spaceInvadersController.setUnderage(underage);
+                spaceView.setObserver(spaceInvadersController);
+                onResume();
+            }
+
+            @Override
+            public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+
+            }
+
+            @Override
+            public void surfaceDestroyed(SurfaceHolder holder) {
+
+            }
+        });
+
+
 
     }
+
+
 
 
 
@@ -53,9 +81,19 @@ public class SpaceInvadersActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        if(spaceInvadersController!=null) {
+            // Le dice al método de reanudar del gameView que se ejecute
+            spaceInvadersController.resume();
+            spaceInvadersController.run();
+        }
 
-        // Le dice al método de reanudar del gameView que se ejecute
-        spaceInvadersController.resume();
+
+
+
+
+
+
+
     }
 
     // Este método se ejecuta cuando el jugador se sale del juego
@@ -64,7 +102,9 @@ public class SpaceInvadersActivity extends Activity {
         super.onPause();
 
         // Le dice al método de pausa del gameView que se ejecute
-        spaceInvadersController.pause();
+        if(spaceInvadersController!=null) {
+            spaceInvadersController.pause();
+        }
     }
 
     public void bulletsOn(boolean on){

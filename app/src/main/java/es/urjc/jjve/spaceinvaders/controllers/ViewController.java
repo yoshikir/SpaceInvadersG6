@@ -286,27 +286,13 @@ public class ViewController implements Runnable, Observer {
 
             // Update the players bullet
 
-            for (int i=0;i<playerBullets.size();i++) {
+            for (int i=playerBullets.size()-1;i>=0;i--) {
                 Bullet currentBull = playerBullets.get(i);
                 currentBull.update(fps);
                 //Colisión de bala con invader
                 if(currentBull.getStatus()) {
-                    for (Invader inv : invaders) {
-                        if (inv.getVisibility()) {
-                            if (RectF.intersects(currentBull.getRect(), inv.getRect())) { //Has a bullet hit an invader?
-                                inv.setInvisible();
-//                          soundPool.play(invaderExplodeID, 1, 1, 0, 0, 1);
-                                currentBull.setInactive();
-                                score = score + 100;
+                    if(!checkImpactWithInvaders(currentBull)){
 
-                                // Has the player won
-                                if (score == numInvaders * 100) {
-                                    paused = true;
-                                    score = 0;
-                                    initGame(this.context);
-                                }
-                            }
-                        }
                     }
 
                     //Colisión de bala con muros
@@ -415,8 +401,8 @@ public class ViewController implements Runnable, Observer {
     // start our thread.
     public void resume() {
         playing = true;
-        gameThread = new Thread(this);
-        gameThread.start();
+        paused=false;
+
     }
 
     public void pause() {
@@ -473,6 +459,32 @@ public class ViewController implements Runnable, Observer {
 
     }
 
+
+    private boolean checkImpactWithInvaders(Bullet bullet){
+        Invader inv= null;
+        int i=0;
+        while(bullet.getStatus() && i<invaders.size() ){
+            inv = invaders.get(i);
+            if (inv.getVisibility()) {
+                if (RectF.intersects(bullet.getRect(), inv.getRect())) { //Has a bullet hit an invader?
+                    inv.setInvisible();
+//                          soundPool.play(invaderExplodeID, 1, 1, 0, 0, 1);
+                    bullet.setInactive();
+                    score = score + 100;
+
+                    // Has the player won
+                    if (score == numInvaders * 100) {
+                        paused = true;
+                        score = 0;
+                        initGame(this.context);
+                    }
+                }
+            }
+
+            i++;
+        }
+        return RectF.intersects(bullet.getRect(), inv.getRect());
+    }
 
     private void paintShip() {
 
