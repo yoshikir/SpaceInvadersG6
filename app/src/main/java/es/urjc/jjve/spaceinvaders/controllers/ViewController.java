@@ -473,6 +473,25 @@ public class ViewController implements Runnable, Observer {
 
     }
 
+    private void checkInteresectionWInvader(Bullet bullet){
+
+        int i=0;
+        while (bullet.getStatus() && i<invaders.size()){
+            i++;
+            if(invaders.get(i).getVisibility()){
+                if(RectF.intersects(invaders.get(i).getRect(),bullet.getRect())){
+                    bullet.setInactive();
+                    invaders.get(i).setInvisible();
+                    score += 100;
+                }
+            }
+        }
+
+    }
+
+    private void removeInactiveBullets(){
+
+    }
 
     private void paintShip() {
 
